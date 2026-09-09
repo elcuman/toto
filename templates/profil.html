@@ -1,0 +1,50 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>
+Profil
+</h1>
+
+<div class="grid">
+
+<div class="card">
+
+<h3>
+Kullanıcı
+</h3>
+
+<div class="stat">
+{{ current_user.kullanici_adi }}
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>
+Toplam Puan
+</h3>
+
+<div class="stat">
+{{ toplam_puan }}
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>
+Tahmin Sayısı
+</h3>
+
+<div class="stat">
+{{ tahmin_sayisi }}
+</div>
+
+</div>
+
+</div>
+
+{% endblock %}

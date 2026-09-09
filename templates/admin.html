@@ -1,0 +1,115 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>
+Admin Panel
+</h1>
+
+<div class="grid">
+
+<div class="card">
+Kullanıcı
+
+<div class="stat">
+{{ kullanici_sayisi }}
+</div>
+
+</div>
+
+<div class="card">
+Grup
+
+<div class="stat">
+{{ grup_sayisi }}
+</div>
+
+</div>
+
+<div class="card">
+Toplam Maç
+
+<div class="stat">
+{{ mac_sayisi }}
+</div>
+
+</div>
+
+<div class="card">
+Champions League
+
+<div class="stat">
+{{ cl_mac_sayisi }}
+</div>
+
+</div>
+
+<div class="card">
+Tahmin
+
+<div class="stat">
+{{ tahmin_sayisi }}
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>
+Football-Data API
+</h2>
+
+<p>
+Competition:
+<strong>
+CL
+</strong>
+</p>
+
+<p>
+Season:
+<strong>
+{{ config.get(
+"FOOTBALL_SEASON",
+2026
+) }}
+</strong>
+</p>
+
+<p>
+Provider:
+<strong>
+football-data.org
+</strong>
+</p>
+
+<br>
+
+<a
+class="btn"
+href="{{ url_for('admin_sync') }}"
+>
+Şimdi Sync Et
+</a>
+
+<a
+class="btn"
+href="{{ url_for('admin_api_test') }}"
+>
+API Test
+</a>
+
+<a
+class="btn"
+href="{{ url_for('admin_durum') }}"
+>
+DB Durumu
+</a>
+
+</div>
+
+{% endblock %}

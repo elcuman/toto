@@ -1,0 +1,76 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div
+class="card"
+style="max-width:450px;margin:auto"
+>
+
+<h1>
+
+{% if mode == "giris" %}
+
+Giriş Yap
+
+{% else %}
+
+Kayıt Ol
+
+{% endif %}
+
+</h1>
+
+<form method="POST">
+
+<label>
+Kullanıcı adı
+</label>
+
+<input
+name="kullanici_adi"
+required
+>
+
+<label>
+Şifre
+</label>
+
+<input
+type="password"
+name="sifre"
+required
+>
+
+<button class="btn">
+
+{% if mode == "giris" %}
+Giriş Yap
+{% else %}
+Kayıt Ol
+{% endif %}
+
+</button>
+
+</form>
+
+<br>
+
+{% if mode == "giris" %}
+
+<a href="{{ url_for('kayit') }}">
+Hesap oluştur
+</a>
+
+{% else %}
+
+<a href="{{ url_for('giris') }}">
+Giriş yap
+</a>
+
+{% endif %}
+
+</div>
+
+{% endblock %}

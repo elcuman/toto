@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gruplarım - Tahmin Ligi</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-light">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('dashboard') }}"><i class="fa-solid fa-futbol me-2"></i>Tahmin Ligi</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('dashboard') }}">Panel</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('gruplar') }}">Gruplarım</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('profil') }}">Profil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="{{ url_for('cikis') }}">Çıkış Yap</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="row">
+                    <div class="col-12">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Header & Action Buttons -->
+        <div class="row mb-4 align-items-center">
+            <div class="col-md-6">
+                <h2><i class="fa-solid fa-users-rectangle me-2"></i>Gruplarım</h2>
+                <p class="text-muted">Katıldığınız veya oluşturduğunuz tahmin grupları.</p>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#grupOlusturModal">
+                    <i class="fa-solid fa-plus me-1"></i> Yeni Grup Oluştur
+                </button>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#grupKatilModal">
+                    <i class="fa-solid fa-right-to-bracket me-1"></i> Gruba Katıl
+                </button>
+            </div>
+        </div>
+
+        <!-- Groups Grid -->
+        <div class="row">
+            {% if gruplar %}
+                {% for g in gruplar %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title text-primary fw-bold">
+                                    <i class="fa-solid fa-people-group me-1"></i> {{ g.ad }}
+                                </h5>
+                                
+                                <!-- Grup Açıklaması / Kuralı -->
+                                {% if g.aciklama %}
+                                    <div class="card-text text-secondary small bg-light p-2 rounded border mb-3">
+                                        <i class="fa-solid fa-circle-info me-1"></i> <strong>Kural/Açıklama:</strong> {{ g.aciklama }}
+                                    </div>
+                                {% else %}
+                                    <p class="card-text text-muted small fst-italic mb-3">Açıklama belirtilmemiş.</p>
+                                {% endif %}
+
+                                <div class="mt-auto">
+                                    <hr class="text-muted">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <span class="badge bg-secondary">Davet Kodu: <strong>{{ g.davet_kodu }}</strong></span>
+                                        <span class="text-muted small">Sezon: {{ g.sezon }}</span>
+                                    </div>
+                                    <!-- Döngü değişkeni 'g' kullanılarak 'g.id' hatasız çağrıldı -->
+                                    <a href="{{ url_for('grup', grup_id=g.id) }}" class="btn btn-outline-primary w-100">
+                                        <i class="fa-solid fa-arrow-right-to-bracket me-1"></i> Gruba Git
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center py-4">
+                        <i class="fa-solid fa-triangle-exclamation fa-2x mb-2"></i>
+                        <p class="mb-0">Henüz bir gruba dahil değilsiniz. Yukarıdaki butonları kullanarak yeni bir grup oluşturabilir veya mevcut bir gruba katılabilirsiniz.</p>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Grup Oluştur Modal -->
+    <div class="modal fade" id="grupOlusturModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ url_for('grup_olustur') }}" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fa-solid fa-plus-circle me-1"></i> Yeni Grup Oluştur</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="ad" class="form-label">Grup Adı</label>
+                            <input type="text" class="form-control" id="ad" name="ad" placeholder="Örn: Ofis Ligi" required>
+                        </div>
+                        <!-- Açıklama / Pizza Kuralı Alanı -->
+                        <div class="mb-3">
+                            <label for="aciklama" class="form-label">Grup Açıklaması / Kuralı</label>
+                            <textarea class="form-control" id="aciklama" name="aciklama" rows="3" placeholder="Örn: Gruba sonuncu olursan pizza ismarlasın"></textarea>
+                            <div class="form-text">Grup üyelerinin görebileceği kuralları veya cezaları buraya yazabilirsiniz.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-primary">Oluştur</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gruba Katıl Modal -->
+    <div class="modal fade" id="grupKatilModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="{{ url_for('grup_katil') }}" method="POST">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fa-solid fa-key me-1"></i> Davet Kodu ile Gruba Katıl</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="davet_kodu" class="form-label">Davet Kodu</label>
+                            <input type="text" class="form-control text-uppercase" id="davet_kodu" name="davet_kodu" placeholder="Örn: A1B2C3D4" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="submit" class="btn btn-success">Katıl</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
