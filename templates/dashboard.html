@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Dashboard</h1>
+
+<div class="grid">
+
+<div class="card">
+<div>Toplam Puan</div>
+<div class="stat">{{ toplam_puan }}</div>
+</div>
+
+<div class="card">
+<div>Gruplarım</div>
+<div class="stat">{{ gruplar|length }}</div>
+</div>
+
+<div class="card">
+<div>Yaklaşan Maç</div>
+<div class="stat">{{ yaklasan_maclar|length }}</div>
+</div>
+
+<div class="card">
+<div>Toplam Tahmin</div>
+<div class="stat">{{ toplam_tahmin }}</div>
+</div>
+
+</div>
+
+
+<div class="card">
+<h2>Gruplarım</h2>
+
+{% if gruplar %}
+  {% for grup in gruplar %}
+    <p>
+      <a class="btn" href="{{ url_for('grup', grup_id=grup.id) }}">
+        {{ grup.ad }}
+      </a>
+    </p>
+  {% endfor %}
+{% else %}
+  <p>Henüz bir grubunuz yok.</p>
+  <a class="btn" href="{{ url_for('gruplar') }}">Grup oluştur</a>
+{% endif %}
+</div>
+
+
+<div class="card">
+<h2>⚽ Yaklaşan Maçlar</h2>
+
+{% if yaklasan_maclar %}
+  {% for mac in yaklasan_maclar %}
+    <div class="match">
+      <div class="teams">
+        <span>
+          {% if mac.ev_logo %}
+            <img class="logo" src="{{ mac.ev_logo }}">
+          {% endif %}
+          {{ mac.ev_sahibi }}
+        </span>
+
+        <span>VS</span>
+
+        <span>
+          {{ mac.deplasman }}
+          {% if mac.deplasman_logo %}
+            <img class="logo" src="{{ mac.deplasman_logo }}">
+          {% endif %}
+        </span>
+      </div>
+
+      <p>
+        🕒 
+        {% if mac.baslangic %}
+          {{ mac.baslangic.strftime("%d.%m.%Y %H:%M") }}
+        {% endif %}
+        - {{ mac.lig }}
+      </p>
+
+      <!-- Kullanıcının Bu Maç İçin Tahmini -->
+      {% set t = tahminler.get(mac.id) %}
+      <div class="match-info">
+        {% if t %}
+          🎯 Tahmininiz: <strong>{{ t.ev_skor }} - {{ t.deplasman_skor }}</strong>
+        {% else %}
+          <span class="badge badge-warn">⚠️ Henüz tahmin yapmadınız</span>
+        {% endif %}
+      </div>
+
+    </div>
+  {% endfor %}
+{% else %}
+  <p>Şu anda yaklaşan maç bulunamadı.</p>
+{% endif %}
+
+</div>
+
+
+<!-- Biten Maçlar ve Sonuçları -->
+<div class="card">
+<h2>🏁 Son Oynanan Maçlar ve Sonuçlar</h2>
+
+{% if biten_maclar %}
+  {% for mac in biten_maclar %}
+    <div class="match">
+      <div class="teams">
+        <span>
+          {% if mac.ev_logo %}
+            <img class="logo" src="{{ mac.ev_logo }}">
+          {% endif %}
+          {{ mac.ev_sahibi }}
+        </span>
+
+        <span class="score-pill">
+          {{ mac.ev_skor }} - {{ mac.deplasman_skor }}
+        </span>
+
+        <span>
+          {{ mac.deplasman }}
+          {% if mac.deplasman_logo %}
+            <img class="logo" src="{{ mac.deplasman_logo }}">
+          {% endif %}
+        </span>
+      </div>
+
+      <p style="font-size: 0.85em; color: var(--muted);">{{ mac.lig }}</p>
+
+      <!-- Biten Maç İçin Kullanıcının Tahmini ve Kazanılan Puan -->
+      {% set t = tahminler.get(mac.id) %}
+      <div class="match-info">
+        {% if t %}
+          🎯 Tahmininiz: {{ t.ev_skor }} - {{ t.deplasman_skor }}
+          {% if t.puan == 5 %}
+            <span class="badge badge-win">🎯 Tam İsabet · +5</span>
+          {% elif t.puan == 3 %}
+            <span class="badge badge-draw">✅ Sonuç Tuttu · +3</span>
+          {% else %}
+            <span class="badge badge-zero">+0</span>
+          {% endif %}
+        {% else %}
+          Maç için tahmininiz bulunmuyor.
+        {% endif %}
+      </div>
+
+    </div>
+  {% endfor %}
+{% else %}
+  <p>Henüz sonuçlanmış maç bulunmuyor.</p>
+{% endif %}
+
+</div>
+
+{% endblock %}

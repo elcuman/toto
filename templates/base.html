@@ -1,0 +1,380 @@
+
+<!doctype html>
+
+<html lang="tr">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1"
+>
+
+<title>
+{{ title or "Şampiyonlar Tahmin Ligi" }}
+</title>
+
+<style>
+
+:root{
+--navy:#0a1230;
+--navy-2:#121b42;
+--gold:#c9a227;
+--gold-light:#e8c96b;
+--bg:#f2f4f9;
+--card:#ffffff;
+--text:#141a2e;
+--muted:#6b7280;
+--border:#e6e9f2;
+--win:#16a34a;
+--draw:#2563eb;
+--lose:#e2e6ef;
+}
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:
+"Inter",
+-apple-system,
+BlinkMacSystemFont,
+"Segoe UI",
+Roboto,
+Arial,
+sans-serif;
+background:var(--bg);
+color:var(--text);
+}
+
+nav{
+background:
+linear-gradient(
+135deg,
+var(--navy) 0%,
+var(--navy-2) 100%
+);
+color:#fff;
+padding:16px 24px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+flex-wrap:wrap;
+box-shadow:0 2px 12px rgba(10,18,48,.25);
+}
+
+nav strong{
+letter-spacing:.3px;
+font-size:16px;
+}
+
+nav a{
+color:rgba(255,255,255,.82);
+text-decoration:none;
+margin-right:18px;
+font-size:14px;
+font-weight:500;
+padding:6px 2px;
+border-bottom:2px solid transparent;
+transition:color .15s ease, border-color .15s ease;
+}
+
+nav a:hover{
+color:var(--gold-light);
+border-color:var(--gold);
+}
+
+.container{
+max-width:1200px;
+margin:30px auto;
+padding:0 16px;
+}
+
+.card{
+background:var(--card);
+border-radius:16px;
+padding:22px;
+margin-bottom:20px;
+border:1px solid var(--border);
+box-shadow:
+0 4px 18px
+rgba(10,18,48,.05);
+}
+
+.card h2{
+margin-top:0;
+font-size:18px;
+letter-spacing:.2px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:
+repeat(
+auto-fit,
+minmax(
+220px,
+1fr
+)
+);
+gap:16px;
+}
+
+.grid .card{
+text-align:center;
+border-top:3px solid var(--gold);
+}
+
+.grid .card > div:first-child{
+color:var(--muted);
+font-size:13px;
+font-weight:600;
+text-transform:uppercase;
+letter-spacing:.5px;
+margin-bottom:6px;
+}
+
+.stat{
+font-size:32px;
+font-weight:800;
+color:var(--navy);
+}
+
+.btn{
+display:inline-block;
+padding:10px 18px;
+border:0;
+border-radius:10px;
+background:var(--navy);
+color:white;
+text-decoration:none;
+cursor:pointer;
+font-weight:600;
+font-size:14px;
+transition:background .15s ease, transform .1s ease;
+}
+
+.btn:hover{
+background:var(--navy-2);
+transform:translateY(-1px);
+}
+
+input{
+width:100%;
+padding:11px;
+border:
+1px solid #d0d5dd;
+border-radius:8px;
+margin:6px 0 12px;
+font-size:14px;
+}
+
+input:focus{
+outline:none;
+border-color:var(--navy);
+box-shadow:0 0 0 3px rgba(10,18,48,.08);
+}
+
+.match{
+border:
+1px solid var(--border);
+border-radius:14px;
+padding:16px 18px;
+margin-bottom:12px;
+transition:box-shadow .15s ease, border-color .15s ease;
+}
+
+.match:hover{
+border-color:var(--gold);
+box-shadow:0 4px 14px rgba(201,162,39,.12);
+}
+
+.teams{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:15px;
+font-weight:700;
+font-size:15px;
+}
+
+.logo{
+width:32px;
+height:32px;
+object-fit:contain;
+vertical-align:middle;
+margin:0 6px;
+}
+
+.score-pill{
+font-weight:800;
+color:var(--navy);
+background:#f2f4f9;
+border:1px solid var(--border);
+border-radius:999px;
+padding:4px 14px;
+font-size:15px;
+}
+
+.badge{
+display:inline-block;
+padding:3px 10px;
+border-radius:999px;
+font-size:12px;
+font-weight:700;
+}
+
+.badge-win{
+background:rgba(22,163,74,.12);
+color:var(--win);
+}
+
+.badge-draw{
+background:rgba(37,99,235,.12);
+color:var(--draw);
+}
+
+.badge-zero{
+background:#eef0f5;
+color:var(--muted);
+}
+
+.badge-warn{
+background:rgba(230,126,34,.12);
+color:#c2660f;
+}
+
+.match-info{
+margin-top:10px;
+font-size:13.5px;
+color:var(--muted);
+}
+
+.flash{
+padding:12px 16px;
+border-radius:10px;
+margin-bottom:10px;
+background:#e0f2fe;
+border-left:4px solid #2563eb;
+font-size:14px;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th{
+font-size:12px;
+text-transform:uppercase;
+letter-spacing:.4px;
+color:var(--muted);
+}
+
+th,td{
+padding:10px;
+border-bottom:
+1px solid var(--border);
+text-align:left;
+}
+
+@media(max-width:600px){
+
+.container{
+margin-top:15px;
+}
+
+.teams{
+flex-direction:column;
+gap:8px;
+}
+
+nav{
+align-items:flex-start;
+}
+
+nav a{
+margin-right:12px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<nav>
+
+<div>
+<strong>
+⚽ Şampiyonlar Tahmin Ligi
+</strong>
+</div>
+
+<div>
+
+{% if current_user.is_authenticated %}
+
+<a href="{{ url_for('dashboard') }}">
+Dashboard
+</a>
+
+<a href="{{ url_for('gruplar') }}">
+Gruplar
+</a>
+
+<a href="{{ url_for('profil') }}">
+Profil
+</a>
+
+{% if current_user.admin %}
+
+<a href="{{ url_for('admin') }}">
+Admin
+</a>
+
+{% endif %}
+
+<a href="{{ url_for('cikis') }}">
+Çıkış
+</a>
+
+{% endif %}
+
+</div>
+
+</nav>
+
+<div class="container">
+
+{% with messages =
+get_flashed_messages(
+with_categories=true
+) %}
+
+{% for category,message in messages %}
+
+<div class="flash">
+{{ message }}
+</div>
+
+{% endfor %}
+
+{% endwith %}
+
+{% block content %}
+{% endblock %}
+
+</div>
+
+</body>
+
+</html>
+
